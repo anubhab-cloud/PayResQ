@@ -2,8 +2,14 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.api.v1.health import router as health_router
+from app.api.v1.merchants import router as merchants_router
+from app.api.v1.customers import router as customers_router
+from app.api.v1.transactions import router as transactions_router
 from app.core.config import settings
 from app.core.redis import close_redis
+
+# Import all models so SQLAlchemy metadata is populated (required by Alembic autogenerate)
+import app.models  # noqa: F401
 
 
 @asynccontextmanager
@@ -17,7 +23,7 @@ async def lifespan(app: FastAPI):
 app = FastAPI(
     title=settings.PROJECT_NAME,
     description="PayResQ - Autonomous Payment Revenue Recovery System API",
-    version="0.1.0",
+    version="0.2.0",
     lifespan=lifespan,
 )
 
@@ -33,6 +39,9 @@ app.add_middleware(
 # Include API Routers
 app.include_router(health_router, prefix="/api/v1")
 app.include_router(health_router)  # Also expose /health at root level for container checks
+app.include_router(merchants_router, prefix="/api/v1")
+app.include_router(customers_router, prefix="/api/v1")
+app.include_router(transactions_router, prefix="/api/v1")
 
 
 @app.get("/", tags=["Root"])

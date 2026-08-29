@@ -44,3 +44,6 @@ htmlcov/
 # Docker / OS
 .DS_Store
 Thumbs.db
+
+# SQLite dev database
+*.db
