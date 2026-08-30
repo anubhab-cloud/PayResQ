@@ -47,3 +47,8 @@ Thumbs.db
 
 # SQLite dev database
 *.db
+
+# ML model artifacts (generated — not committed)
+ml/models/recovery_model.json
+ml/models/encodings.json
+ml/models/metadata.json

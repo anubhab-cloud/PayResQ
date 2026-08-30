@@ -5,6 +5,7 @@ from app.api.v1.health import router as health_router
 from app.api.v1.merchants import router as merchants_router
 from app.api.v1.customers import router as customers_router
 from app.api.v1.transactions import router as transactions_router
+from app.api.v1.intelligence import router as intelligence_router
 from app.core.config import settings
 from app.core.redis import close_redis
 
@@ -23,7 +24,7 @@ async def lifespan(app: FastAPI):
 app = FastAPI(
     title=settings.PROJECT_NAME,
     description="PayResQ - Autonomous Payment Revenue Recovery System API",
-    version="0.2.0",
+    version="0.3.0",
     lifespan=lifespan,
 )
 
@@ -42,6 +43,7 @@ app.include_router(health_router)  # Also expose /health at root level for conta
 app.include_router(merchants_router, prefix="/api/v1")
 app.include_router(customers_router, prefix="/api/v1")
 app.include_router(transactions_router, prefix="/api/v1")
+app.include_router(intelligence_router, prefix="/api/v1")
 
 
 @app.get("/", tags=["Root"])
