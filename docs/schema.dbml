@@ -1,0 +1,157 @@
+// PayResQ Database Schema (DBML)
+// Paste this entire file into https://dbdiagram.io/ to generate your visual ER diagram.
+
+Enum transaction_status {
+  CREATED
+  PENDING
+  SUCCESS
+  FAILED
+  CANCELLED
+}
+
+Enum payment_attempt_status {
+  PENDING
+  SUCCESS
+  FAILED
+}
+
+Enum payment_method {
+  CARD
+  UPI
+  NETBANKING
+  WALLET
+}
+
+Enum failure_reason {
+  TIMEOUT
+  BANK_DECLINED
+  INSUFFICIENT_FUNDS
+  NETWORK_ERROR
+  AUTHENTICATION_FAILED
+}
+
+Enum recovery_action_type {
+  RETRY_NOW
+  RETRY_AFTER_DELAY
+  SEND_PAYMENT_LINK
+  CHANGE_PAYMENT_METHOD
+  NOTIFY_CUSTOMER
+  ESCALATE
+  STOP
+}
+
+Enum recovery_action_status {
+  PENDING
+  APPROVED
+  EXECUTING
+  COMPLETED
+  FAILED
+  CANCELLED
+}
+
+Enum actor_type {
+  SYSTEM
+  AI_AGENT
+  HUMAN
+  POLICY_ENGINE
+}
+
+Table merchants {
+  id varchar(36) [pk, note: 'UUID v4']
+  name varchar(255) [not null]
+  is_active boolean [not null, default: true]
+  created_at timestamp [not null]
+  updated_at timestamp [not null]
+}
+
+Table customers {
+  id varchar(36) [pk, note: 'UUID v4']
+  merchant_id varchar(36) [not null, ref: > merchants.id]
+  external_customer_id varchar(255) [not null]
+  name varchar(255) [not null]
+  email varchar(255) [not null]
+  created_at timestamp [not null]
+  updated_at timestamp [not null]
+
+  indexes {
+    (merchant_id, external_customer_id) [unique]
+  }
+}
+
+Table transactions {
+  id varchar(36) [pk, note: 'UUID v4']
+  merchant_id varchar(36) [not null, ref: > merchants.id]
+  customer_id varchar(36) [not null, ref: > customers.id]
+  external_transaction_id varchar(255) [not null]
+  amount numeric(12,2) [not null, note: 'amount > 0']
+  currency varchar(3) [not null, default: 'INR']
+  status transaction_status [not null, default: 'CREATED']
+  created_at timestamp [not null]
+  updated_at timestamp [not null]
+
+  indexes {
+    (merchant_id, status)
+    (customer_id, created_at)
+    (merchant_id, external_transaction_id) [unique]
+  }
+}
+
+Table payment_attempts {
+  id varchar(36) [pk, note: 'UUID v4']
+  transaction_id varchar(36) [not null, ref: > transactions.id]
+  attempt_number integer [not null, note: 'attempt_number > 0']
+  payment_method payment_method [not null]
+  bank varchar(100) [not null]
+  status payment_attempt_status [not null]
+  failure_reason failure_reason
+  attempted_at timestamp [not null]
+
+  indexes {
+    (transaction_id, attempt_number) [unique]
+  }
+}
+
+Table failure_events {
+  id varchar(36) [pk, note: 'UUID v4']
+  payment_attempt_id varchar(36) [not null, ref: > payment_attempts.id]
+  event_type varchar(100) [not null]
+  failure_code varchar(100) [not null]
+  metadata jsonb
+  occurred_at timestamp [not null]
+}
+
+Table recovery_actions {
+  id varchar(36) [pk, note: 'UUID v4']
+  transaction_id varchar(36) [not null, ref: > transactions.id]
+  action_type recovery_action_type [not null]
+  status recovery_action_status [not null, default: 'PENDING']
+  reason text
+  confidence numeric(4,3) [note: '0.000 to 1.000']
+  scheduled_for timestamp
+  executed_at timestamp
+  created_at timestamp [not null]
+
+  indexes {
+    (transaction_id, status)
+  }
+}
+
+Table recovery_outcomes {
+  id varchar(36) [pk, note: 'UUID v4']
+  recovery_action_id varchar(36) [not null, ref: > recovery_actions.id]
+  success boolean [not null]
+  recovered_amount numeric(12,2) [note: 'recovered_amount >= 0']
+  failure_reason text
+  completed_at timestamp [not null]
+}
+
+Table audit_logs {
+  id varchar(36) [pk, note: 'UUID v4']
+  transaction_id varchar(36) [not null, ref: > transactions.id]
+  event_type varchar(100) [not null]
+  actor_type actor_type [not null]
+  action varchar(100) [not null]
+  reason text
+  metadata jsonb
+  created_at timestamp [not null]
+}
