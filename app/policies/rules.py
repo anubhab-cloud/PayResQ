@@ -165,8 +165,8 @@ def rule_high_value_transaction(
         return PolicyDecision(
             outcome=PolicyOutcome.HUMAN_APPROVAL,
             reason=(
-                f"Transaction amount ₹{float(transaction.amount):,.2f} exceeds "
-                f"automatic recovery threshold ₹{settings.MAX_AUTOMATIC_RECOVERY_AMOUNT:,.0f}. "
+                f"Transaction amount INR {float(transaction.amount):,.2f} exceeds "
+                f"automatic recovery threshold INR {settings.MAX_AUTOMATIC_RECOVERY_AMOUNT:,.0f}. "
                 "Human approval required."
             ),
             rule_triggered="high_value_transaction",

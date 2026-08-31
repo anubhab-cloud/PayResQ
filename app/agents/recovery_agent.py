@@ -79,9 +79,9 @@ A payment has failed. Analyze the context below and recommend the single best re
 
 === INSTRUCTIONS ===
 1. Consider root cause, XGBoost probabilities, customer reliability, and retry history.
-2. Select the action most likely to recover revenue safely.
-3. If the bank is in degradation, prefer RETRY_AFTER_DELAY.
-4. If retry count is near the limit, prefer SEND_PAYMENT_LINK or ESCALATE.
+2. Refer strictly to the exact XGBoost probabilities provided above. Do NOT invent or alter probabilities.
+3. Select the action most likely to recover revenue safely.
+4. If you select an action other than the highest predicted XGBoost action, your reasoning MUST explicitly cite the highest XGBoost prediction and explain why a different action is preferred based on context (e.g. bank degradation, retry limits).
 5. If confidence is low, set ESCALATE or STOP.
 6. You MUST respond with a single JSON object matching this exact schema:
 
