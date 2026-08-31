@@ -20,6 +20,23 @@ class Settings(BaseSettings):
     REDIS_PORT: int = 6379
     REDIS_URL: Optional[str] = None
 
+    # LLM Provider
+    LLM_PROVIDER: str = "fake"           # "fake" | "openai"
+    LLM_MODEL: str = "gpt-4o-mini"
+    LLM_API_KEY: Optional[str] = None
+    LLM_TIMEOUT_SECONDS: int = 30
+
+    # Agent / Policy
+    AGENT_CONFIDENCE_THRESHOLD: float = 0.6
+    MAX_AUTOMATIC_RETRIES: int = 3
+    MAX_AUTOMATIC_RECOVERY_AMOUNT: float = 50000.0
+
+    # Recovery Worker
+    RECOVERY_QUEUE_NAME: str = "recovery:jobs"
+    RECOVERY_DEAD_LETTER_KEY: str = "recovery:dead"
+    RECOVERY_WORKER_POLL_INTERVAL: int = 5    # seconds
+    RECOVERY_MAX_JOB_RETRIES: int = 3
+
     model_config = SettingsConfigDict(
         env_file=".env",
         env_file_encoding="utf-8",
