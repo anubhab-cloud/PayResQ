@@ -23,13 +23,22 @@ from app.policies.schemas import PolicyDecision, PolicyOutcome
 from app.core.config import settings
 
 
+def _val(enum_or_str) -> str:
+    if hasattr(enum_or_str, "value"):
+        return str(enum_or_str.value).upper()
+    s = str(enum_or_str)
+    if "." in s:
+        s = s.split(".")[-1]
+    return s.upper()
+
+
 def rule_already_successful(
     decision: AgentDecision,
     transaction: Transaction,
     existing_actions: list[RecoveryAction],
 ) -> Optional[PolicyDecision]:
     """Block if the transaction is already successful."""
-    if str(transaction.status).upper() == "SUCCESS":
+    if _val(transaction.status) == "SUCCESS":
         return PolicyDecision(
             outcome=PolicyOutcome.BLOCK,
             reason="Transaction is already successful. No recovery needed.",
@@ -45,7 +54,7 @@ def rule_unsupported_action(
 ) -> Optional[PolicyDecision]:
     """Block any action not in the explicitly supported list."""
     allowed = {a.value for a in RecoveryActionType}
-    if decision.action.value not in allowed:
+    if _val(decision.action) not in allowed:
         return PolicyDecision(
             outcome=PolicyOutcome.BLOCK,
             reason=f"Action '{decision.action}' is not a supported recovery action.",
@@ -83,8 +92,8 @@ def rule_duplicate_recovery(
     }
     for ra in existing_actions:
         if (
-            str(ra.action_type).upper() == decision.action.value
-            and str(ra.status).upper() in blocking_statuses
+            _val(ra.action_type) == _val(decision.action)
+            and _val(ra.status) in blocking_statuses
         ):
             return PolicyDecision(
                 outcome=PolicyOutcome.BLOCK,
@@ -107,11 +116,11 @@ def rule_retry_limit(
         RecoveryActionType.RETRY_NOW.value,
         RecoveryActionType.RETRY_AFTER_DELAY.value,
     }
-    if decision.action.value in retry_actions:
+    if _val(decision.action) in retry_actions:
         completed_retries = sum(
             1 for ra in existing_actions
-            if str(ra.action_type).upper() in retry_actions
-            and str(ra.status).upper() == RecoveryActionStatus.COMPLETED.value
+            if _val(ra.action_type) in retry_actions
+            and _val(ra.status) == _val(RecoveryActionStatus.COMPLETED)
         )
         if completed_retries >= settings.MAX_AUTOMATIC_RETRIES:
             return PolicyDecision(

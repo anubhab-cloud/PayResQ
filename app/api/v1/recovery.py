@@ -133,8 +133,12 @@ async def get_recovery_status(
     db: AsyncSession = Depends(get_db),
 ):
     """Returns current state of a recovery action including outcome if available."""
+    from sqlalchemy.orm import selectinload
+
     result = await db.execute(
-        select(RecoveryAction).where(RecoveryAction.id == recovery_action_id)
+        select(RecoveryAction)
+        .options(selectinload(RecoveryAction.outcome))
+        .where(RecoveryAction.id == recovery_action_id)
     )
     ra = result.scalar_one_or_none()
     if ra is None:

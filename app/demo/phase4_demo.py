@@ -4,26 +4,18 @@ app/demo/phase4_demo.py
 End-to-end Phase 4 demo scenario.
 
 Demonstrates the full loop:
-  FAILED → Agent → Policy → Redis → Worker → Simulator → Outcome
+  FAILED -> Agent -> Policy -> Redis -> Worker -> Simulator -> Outcome
 
 Runs entirely in-memory using SQLite (no PostgreSQL or Redis required).
 Uses FakeLLMProvider for determinism.
 
 Run with:
     python -m app.demo.phase4_demo
-
-Expected output:
-    Transaction: ₹7,500 CARD / ICICI / TIMEOUT
-    Agent:  RETRY_AFTER_DELAY (confidence=0.91)
-    Policy: ALLOW
-    Queue:  Job enqueued
-    Worker: Executing...
-    Outcome: SUCCESS — ₹7,500 RECOVERED  (or FAILED depending on simulation)
 """
 from __future__ import annotations
 
 import asyncio
-import json
+import json as _json
 import sys
 from pathlib import Path
 
@@ -36,14 +28,16 @@ from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, Asyn
 from sqlalchemy.pool import StaticPool
 
 from app.core.db import Base
-from app.models import *  # noqa: F401, F403 — ensure all models are registered
+import app.models  # noqa: F401 -- register all models
 
 
 async def run_demo() -> None:
-    print("\n" + "=" * 60)
-    print("  PayResQ Phase 4 — End-to-End Recovery Demo")
+    print("")
+    print("=" * 60)
+    print("  PayResQ Phase 4 -- End-to-End Recovery Demo")
     print("  EXPERIMENTAL: Synthetic data / simulated outcomes")
-    print("=" * 60 + "\n")
+    print("=" * 60)
+    print("")
 
     # --- Setup in-memory SQLite DB ---
     engine = create_async_engine(
@@ -115,12 +109,13 @@ async def run_demo() -> None:
         db.add(fe)
         await db.commit()
 
-        print(f"[1] Transaction created")
+        print("[1] Transaction created")
         print(f"    ID:      {transaction.id}")
-        print(f"    Amount:  ₹{float(transaction.amount):,.0f}")
+        print(f"    Amount:  INR {float(transaction.amount):,.0f}")
         print(f"    Method:  {attempt.payment_method} / {attempt.bank}")
         print(f"    Failure: {attempt.failure_reason}")
-        print(f"    Status:  {transaction.status}\n")
+        print(f"    Status:  {transaction.status}")
+        print("")
 
         # --- 2. Run Agent (FakeLLMProvider) ---
         from app.agents.providers.fake import FakeLLMProvider
@@ -128,7 +123,7 @@ async def run_demo() -> None:
         from app.policies.engine import PolicyEngine
         from app.services.recovery_service import RecoveryService
 
-        provider = FakeLLMProvider()   # deterministic — no API key needed
+        provider = FakeLLMProvider()   # deterministic -- no API key needed
         agent = RecoveryAgent(provider=provider)
         policy_engine = PolicyEngine()
         service = RecoveryService(agent=agent, policy_engine=policy_engine)
@@ -156,7 +151,7 @@ async def run_demo() -> None:
 
         mock_redis = MockRedis()
 
-        print("[2] Running Agent → Policy pipeline...")
+        print("[2] Running Agent -> Policy pipeline...")
         result = await service.process_transaction(
             transaction_id=transaction.id,
             db=db,
@@ -164,55 +159,55 @@ async def run_demo() -> None:
         )
 
         agent_decision = result.get("agent_decision", {})
-        print(f"\n[3] Agent Decision")
+        print("")
+        print("[3] Agent Decision")
         print(f"    Action:     {agent_decision.get('action')}")
         print(f"    Confidence: {agent_decision.get('confidence')}")
-        print(f"    Reason:     {agent_decision.get('reason', '')[:80]}...")
+        reason = str(agent_decision.get('reason', ''))
+        print(f"    Reason:     {reason[:80]}...")
         print(f"    Root Cause: {agent_decision.get('root_cause')}")
-
-        print(f"\n[4] Policy Engine")
+        print("")
+        print("[4] Policy Engine")
         print(f"    Outcome:    {result.get('policy_outcome')}")
-        print(f"    Reason:     {result.get('policy_reason', '')[:80]}")
+        policy_reason = str(result.get('policy_reason', ''))
+        print(f"    Reason:     {policy_reason[:80]}")
         print(f"    Status:     {result.get('status')}")
 
         recovery_action_id = result.get("recovery_action_id")
         job_id = result.get("job_id")
-        print(f"\n[5] Recovery Action: {recovery_action_id}")
+        print("")
+        print(f"[5] Recovery Action: {recovery_action_id}")
         print(f"    Job ID:          {job_id or 'N/A (not enqueued)'}")
         print(f"    Queue length:    {len(mock_redis._queue)}")
 
         # --- 3. Worker execution ---
         if mock_redis._queue or result.get("status") == "ENQUEUED":
-            print("\n[6] Worker processing job...")
+            print("")
+            print("[6] Worker processing job...")
             from app.recovery.executor import RecoveryExecutor
             from app.recovery.simulator import PaymentSimulator
             from app.recovery.schemas import RecoveryJob
-            import json as _json
 
             executor = RecoveryExecutor(simulator=PaymentSimulator())
 
-            # Get job from mock queue
             if mock_redis._queue:
                 raw = mock_redis._queue[0]
-            else:
-                # Reconstruct from result
-                raw = None
-
-            if raw:
                 job = RecoveryJob.model_validate(_json.loads(raw))
                 sim_result = await executor.execute(job, db)
 
-                print(f"\n[7] Recovery Outcome")
+                print("")
+                print("[7] Recovery Outcome")
                 print(f"    Success:          {sim_result.success}")
                 if sim_result.success:
-                    print(f"    Recovered Amount: ₹{sim_result.recovered_amount:,.2f}")
-                    print(f"    Result:           ✅ ₹7,500 RECOVERED")
+                    print(f"    Recovered Amount: INR {sim_result.recovered_amount:,.2f}")
+                    print(f"    Result:           SUCCESS - INR 7,500 RECOVERED")
                 else:
                     print(f"    Failure Reason:   {sim_result.failure_reason}")
-                    print(f"    Result:           ❌ Recovery failed (will retry or escalate)")
+                    print(f"    Result:           FAILED (will retry or escalate)")
                 print(f"    Note:             {sim_result.simulator_note}")
         else:
-            print(f"\n[6] Recovery not enqueued — status: {result.get('status')}")
+            print("")
+            print(f"[6] Recovery not enqueued -- status: {result.get('status')}")
 
         # --- 4. Audit trail ---
         from sqlalchemy import select
@@ -223,14 +218,19 @@ async def run_demo() -> None:
             .order_by(AuditLog.created_at)
         )
         audit_logs = audit_result.scalars().all()
-        print(f"\n[8] Audit Trail ({len(audit_logs)} entries)")
+        print("")
+        print(f"[8] Audit Trail ({len(audit_logs)} entries)")
         for log in audit_logs:
-            print(f"    [{log.actor_type}] {log.event_type}: {log.action} — {log.reason[:60]}")
+            actor = str(log.actor_type)
+            reason_short = str(log.reason or "")[:60]
+            print(f"    [{actor}] {log.event_type}: {log.action} -- {reason_short}")
 
-    print("\n" + "=" * 60)
+    print("")
+    print("=" * 60)
     print("  Phase 4 Demo Complete")
-    print("  EXPERIMENTAL — synthetic simulation only")
-    print("=" * 60 + "\n")
+    print("  EXPERIMENTAL -- synthetic simulation only")
+    print("=" * 60)
+    print("")
 
     await engine.dispose()
 

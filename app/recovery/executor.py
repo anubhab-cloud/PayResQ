@@ -66,8 +66,16 @@ class RecoveryExecutor:
         if recovery_action is None:
             raise ValueError(f"RecoveryAction {job.recovery_action_id} not found")
 
+        def _val(enum_or_str) -> str:
+            if hasattr(enum_or_str, "value"):
+                return str(enum_or_str.value).upper()
+            s = str(enum_or_str)
+            if "." in s:
+                s = s.split(".")[-1]
+            return s.upper()
+
         # --- Idempotency check ---
-        if str(recovery_action.status).upper() == RecoveryActionStatus.COMPLETED.value:
+        if _val(recovery_action.status) == RecoveryActionStatus.COMPLETED.value:
             logger.warning(
                 "Idempotency: job_id=%s already COMPLETED — skipping", job.job_id
             )
