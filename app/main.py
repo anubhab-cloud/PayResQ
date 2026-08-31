@@ -6,6 +6,8 @@ from app.api.v1.merchants import router as merchants_router
 from app.api.v1.customers import router as customers_router
 from app.api.v1.transactions import router as transactions_router
 from app.api.v1.intelligence import router as intelligence_router
+from app.api.v1.agent import router as agent_router
+from app.api.v1.recovery import router as recovery_router
 from app.core.config import settings
 from app.core.redis import close_redis
 
@@ -24,7 +26,7 @@ async def lifespan(app: FastAPI):
 app = FastAPI(
     title=settings.PROJECT_NAME,
     description="PayResQ - Autonomous Payment Revenue Recovery System API",
-    version="0.3.0",
+    version="0.4.0",
     lifespan=lifespan,
 )
 
@@ -44,6 +46,8 @@ app.include_router(merchants_router, prefix="/api/v1")
 app.include_router(customers_router, prefix="/api/v1")
 app.include_router(transactions_router, prefix="/api/v1")
 app.include_router(intelligence_router, prefix="/api/v1")
+app.include_router(agent_router, prefix="/api/v1")
+app.include_router(recovery_router, prefix="/api/v1")
 
 
 @app.get("/", tags=["Root"])
