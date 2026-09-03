@@ -18,7 +18,26 @@ import app.models  # noqa: F401
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Startup tasks
+    # Startup tasks: Ensure DB schema exists and seed initial synthetic data if empty
+    from app.core.db import engine, Base, AsyncSessionLocal
+    from app.models import Merchant
+    from sqlalchemy import select
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
+
+    async with AsyncSessionLocal() as session:
+        result = await session.execute(select(Merchant))
+        merchants = result.scalars().all()
+        if not merchants:
+            from ml.data.scripts.generate_data import run as run_generator
+            await run_generator(
+                n_merchants=5,
+                n_customers=20,
+                n_transactions=100,
+                seed=42,
+                database_url=settings.async_database_url,
+            )
+
     yield
     # Shutdown tasks
     await close_redis()

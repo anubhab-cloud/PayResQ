@@ -44,3 +44,18 @@ async def get_recovery_actions(db: AsyncSession, transaction_id: str) -> list[Re
         .order_by(RecoveryAction.created_at)
     )
     return list(result.scalars().all())
+
+
+async def list_transactions(
+    db: AsyncSession,
+    limit: int = 50,
+    offset: int = 0,
+    status: Optional[str] = None,
+) -> list[Transaction]:
+    query = select(Transaction)
+    if status:
+        query = query.where(Transaction.status == status.upper())
+    query = query.order_by(Transaction.created_at.desc()).limit(limit).offset(offset)
+    result = await db.execute(query)
+    return list(result.scalars().all())
+

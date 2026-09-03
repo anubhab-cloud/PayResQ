@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.db import get_db
 from app.schemas.transaction import TransactionCreate, TransactionResponse
@@ -7,6 +7,19 @@ from app.schemas.recovery_action import RecoveryActionResponse
 from app.services import transaction_service, merchant_service, customer_service
 
 router = APIRouter(prefix="/transactions", tags=["Transactions"])
+
+
+@router.get("", response_model=list[TransactionResponse])
+async def list_transactions(
+    limit: int = Query(default=50, ge=1, le=100),
+    offset: int = Query(default=0, ge=0),
+    status: str | None = Query(default=None),
+    db: AsyncSession = Depends(get_db),
+) -> list[TransactionResponse]:
+    transactions = await transaction_service.list_transactions(
+        db, limit=limit, offset=offset, status=status
+    )
+    return [TransactionResponse.model_validate(t) for t in transactions]
 
 
 @router.post("", response_model=TransactionResponse, status_code=status.HTTP_201_CREATED)

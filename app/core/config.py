@@ -47,7 +47,8 @@ class Settings(BaseSettings):
     def async_database_url(self) -> str:
         if self.DATABASE_URL:
             return self.DATABASE_URL
-        return f"postgresql+asyncpg://{self.POSTGRES_USER}:{self.POSTGRES_PASSWORD}@{self.POSTGRES_HOST}:{self.POSTGRES_PORT}/{self.POSTGRES_DB}"
+        # Default to SQLite for zero-config local development; Postgres can be set via DATABASE_URL or env
+        return "sqlite+aiosqlite:///./payresq.db"
 
     @property
     def async_redis_url(self) -> str:

@@ -185,3 +185,24 @@ async def test_get_recovery_actions_empty(async_client):
     resp = await async_client.get(f"/api/v1/transactions/{tx_id}/recovery-actions")
     assert resp.status_code == 200
     assert resp.json() == []
+
+
+@pytest.mark.asyncio
+async def test_list_transactions(async_client):
+    m = await async_client.post("/api/v1/merchants", json={"name": "ListMerchant"})
+    merchant_id = m.json()["id"]
+    c = await async_client.post(
+        "/api/v1/customers",
+        json={"merchant_id": merchant_id, "external_customer_id": "EXT-LIST-1", "name": "List User"},
+    )
+    customer_id = c.json()["id"]
+    await async_client.post(
+        "/api/v1/transactions",
+        json={"merchant_id": merchant_id, "customer_id": customer_id, "external_transaction_id": "TXN-L-1", "amount": "100.00"},
+    )
+    resp = await async_client.get("/api/v1/transactions?limit=10")
+    assert resp.status_code == 200
+    items = resp.json()
+    assert isinstance(items, list)
+    assert len(items) >= 1
+
