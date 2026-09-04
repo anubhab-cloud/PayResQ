@@ -7,19 +7,42 @@ interface MlPerformanceCardProps {
 }
 
 export const MlPerformanceCard: React.FC<MlPerformanceCardProps> = ({ modelInfo }) => {
-  const info = modelInfo || {
-    model_version: 'v1.0',
-    algorithm: 'XGBoost Classifier',
-    training_samples: 75000,
-    roc_auc: 0.812,
-    precision: 0.784,
-    recall: 0.741,
-    f1_score: 0.762,
-    log_loss: 0.435,
-    baseline_recovery_rate: 22.1,
-    ml_recovery_rate: 44.7,
-    improvement_factor: '2.02x',
-    note: 'EXPERIMENTAL — offline evaluation metrics on synthetic payment dataset',
+  const evalData = modelInfo?.evaluation || {};
+
+  const info = {
+    model_version: modelInfo?.model_version || 'v1.0',
+    algorithm: modelInfo?.algorithm || 'XGBoost Classifier',
+    training_samples:
+      (modelInfo?.training_rows || 0) + (modelInfo?.test_rows || 0) ||
+      modelInfo?.training_samples ||
+      75000,
+    roc_auc: evalData.roc_auc ?? modelInfo?.roc_auc ?? 0.812,
+    precision: evalData.precision ?? modelInfo?.precision ?? 0.784,
+    recall: evalData.recall ?? modelInfo?.recall ?? 0.741,
+    f1_score: evalData.f1_score ?? modelInfo?.f1_score ?? 0.762,
+    log_loss: evalData.log_loss ?? modelInfo?.log_loss ?? 0.435,
+    baseline_recovery_rate:
+      evalData.baseline_recovery_rate ?? modelInfo?.baseline_recovery_rate ?? 22.1,
+    ml_recovery_rate:
+      evalData.ml_recovery_rate ?? modelInfo?.ml_recovery_rate ?? 44.7,
+    improvement_factor:
+      evalData.improvement_factor ?? modelInfo?.improvement_factor ?? '2.02x',
+    feature_count: modelInfo?.feature_count || 12,
+    feature_columns: modelInfo?.feature_columns || [
+      'amount',
+      'hour',
+      'day_of_week',
+      'tx_age_days',
+      'payment_method',
+      'bank',
+      'failure_reason',
+      'attempt_number',
+      'retry_count',
+      'customer_success_rate',
+      'merchant_failure_rate',
+      'in_degradation_window',
+    ],
+    note: modelInfo?.note || 'EXPERIMENTAL — offline evaluation metrics on synthetic payment dataset',
   };
 
   return (
@@ -136,6 +159,24 @@ export const MlPerformanceCard: React.FC<MlPerformanceCardProps> = ({ modelInfo 
         <div className="mt-4 flex items-center gap-2 rounded-lg bg-amber-500/10 p-3 text-xs text-amber-700 dark:text-amber-300 border border-amber-500/20">
           <AlertTriangle className="h-4 w-4 shrink-0" />
           <span>{info.note || 'EXPERIMENTAL — offline evaluation metrics on synthetic payment dataset'}</span>
+        </div>
+      </div>
+
+      {/* Feature Vector Section */}
+      <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+        <h3 className="text-sm font-bold tracking-tight text-slate-900 dark:text-white border-b border-slate-200 pb-3 dark:border-slate-800">
+          Feature Engineering Vector ({info.feature_count} Input Features)
+        </h3>
+        <div className="mt-4 flex flex-wrap gap-2">
+          {info.feature_columns.map((col, idx) => (
+            <span
+              key={idx}
+              className="inline-flex items-center gap-1.5 rounded-md bg-indigo-50 px-2.5 py-1 text-xs font-medium text-indigo-700 dark:bg-indigo-950/60 dark:text-indigo-300 border border-indigo-200/60 dark:border-indigo-800/60"
+            >
+              <span className="h-1.5 w-1.5 rounded-full bg-indigo-500" />
+              {col}
+            </span>
+          ))}
         </div>
       </div>
     </div>

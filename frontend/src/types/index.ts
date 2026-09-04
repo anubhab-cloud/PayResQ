@@ -157,15 +157,29 @@ export interface DemoRunResponse {
 
 export interface ModelInfo {
   model_version: string;
-  algorithm: string;
-  training_samples: number;
-  roc_auc: number;
-  precision: number;
-  recall: number;
-  f1_score: number;
-  log_loss: number;
-  baseline_recovery_rate: number;
-  ml_recovery_rate: number;
-  improvement_factor: string;
+  algorithm?: string;
+  training_samples?: number;
+  training_rows?: number;
+  test_rows?: number;
+  feature_count?: number;
+  feature_columns?: string[];
+  roc_auc?: number;
+  precision?: number;
+  recall?: number;
+  f1_score?: number;
+  log_loss?: number;
+  baseline_recovery_rate?: number;
+  ml_recovery_rate?: number;
+  improvement_factor?: string;
+  evaluation?: {
+    roc_auc?: number;
+    precision?: number;
+    recall?: number;
+    f1_score?: number;
+    log_loss?: number;
+    baseline_recovery_rate?: number;
+    ml_recovery_rate?: number;
+    improvement_factor?: string;
+  };
   note?: string;
 }
