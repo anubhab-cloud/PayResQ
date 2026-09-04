@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Sun, Moon, Play, Loader2, Sparkles } from 'lucide-react';
+import { Sun, Moon, Play, Loader2, Sparkles, Menu } from 'lucide-react';
 import { dashboardApi } from '../../api/client';
 import { DemoRunResponse } from '../../types';
 
@@ -7,12 +7,14 @@ interface HeaderProps {
   darkMode: boolean;
   onToggleTheme: () => void;
   onDemoCompleted?: (demoResult: DemoRunResponse) => void;
+  onToggleMobileMenu?: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
   darkMode,
   onToggleTheme,
   onDemoCompleted,
+  onToggleMobileMenu,
 }) => {
   const [isExecutingDemo, setIsExecutingDemo] = useState(false);
 
@@ -31,12 +33,21 @@ export const Header: React.FC<HeaderProps> = ({
   };
 
   return (
-    <header className="flex h-16 items-center justify-between border-b border-slate-200 bg-white px-6 dark:border-slate-800 dark:bg-slate-900">
+    <header className="flex h-16 items-center justify-between border-b border-slate-200 bg-white/90 backdrop-blur-md px-4 sm:px-6 dark:border-slate-800 dark:bg-slate-900/90 sticky top-0 z-30">
       <div className="flex items-center gap-3">
-        <h2 className="text-sm font-semibold tracking-wide text-slate-700 dark:text-slate-200">
-          Autonomous Revenue Operations
+        {/* Mobile Hamburger Toggle */}
+        <button
+          onClick={onToggleMobileMenu}
+          className="md:hidden flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 text-slate-600 dark:border-slate-800 dark:text-slate-300"
+          aria-label="Toggle Mobile Menu"
+        >
+          <Menu className="h-5 w-5" />
+        </button>
+
+        <h2 className="text-xs sm:text-sm font-semibold tracking-wide text-slate-700 dark:text-slate-200 truncate">
+          Autonomous Revenue Ops
         </h2>
-        <span className="hidden sm:inline-block rounded-full bg-indigo-500/10 px-2.5 py-0.5 text-[11px] font-medium text-indigo-500 border border-indigo-500/20">
+        <span className="hidden lg:inline-block rounded-full bg-indigo-500/10 px-2.5 py-0.5 text-[11px] font-medium text-indigo-500 border border-indigo-500/20">
           Agent-Driven Recovery
         </span>
       </div>

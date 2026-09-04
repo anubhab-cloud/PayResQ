@@ -12,12 +12,14 @@ interface SidebarProps {
   currentPath: string;
   onNavigate: (path: string) => void;
   pendingApprovalsCount?: number;
+  onCloseMobile?: () => void;
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({
   currentPath,
   onNavigate,
   pendingApprovalsCount = 0,
+  onCloseMobile,
 }) => {
   const navItems = [
     { label: 'Overview', path: '/', icon: LayoutDashboard },
@@ -32,8 +34,15 @@ export const Sidebar: React.FC<SidebarProps> = ({
     { label: 'Audit Log', path: '/audit', icon: FileText },
   ];
 
+  const handleNavClick = (path: string) => {
+    onNavigate(path);
+    if (onCloseMobile) {
+      onCloseMobile();
+    }
+  };
+
   return (
-    <aside className="w-64 border-r border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900 flex flex-col justify-between">
+    <aside className="w-64 h-full border-r border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900 flex flex-col justify-between">
       <div>
         {/* Brand */}
         <div className="flex h-16 items-center gap-3 border-b border-slate-200 px-6 dark:border-slate-800">
@@ -59,7 +68,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
             return (
               <button
                 key={item.path}
-                onClick={() => onNavigate(item.path)}
+                onClick={() => handleNavClick(item.path)}
                 className={`flex w-full items-center justify-between rounded-lg px-3.5 py-2.5 text-sm font-medium transition-colors ${
                   isActive
                     ? 'bg-indigo-50 text-indigo-600 dark:bg-indigo-500/10 dark:text-indigo-400 font-semibold'
