@@ -34,9 +34,13 @@ def get_provider(name: str | None = None) -> LLMProvider:
         from app.agents.providers.openai_provider import OpenAIProvider
         return OpenAIProvider()
 
+    if provider_name in ("gemini", "google"):
+        from app.agents.providers.gemini_provider import GeminiProvider
+        return GeminiProvider()
+
     raise LLMProviderError(
         f"Unknown LLM provider: '{provider_name}'. "
-        "Supported values: 'fake', 'openai'."
+        "Supported values: 'fake', 'openai', 'gemini'."
     )
 
 

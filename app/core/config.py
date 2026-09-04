@@ -21,9 +21,10 @@ class Settings(BaseSettings):
     REDIS_URL: Optional[str] = None
 
     # LLM Provider
-    LLM_PROVIDER: str = "fake"           # "fake" | "openai"
+    LLM_PROVIDER: str = "fake"           # "fake" | "openai" | "gemini"
     LLM_MODEL: str = "gpt-4o-mini"
     LLM_API_KEY: Optional[str] = None
+    GEMINI_API_KEY: Optional[str] = None
     LLM_TIMEOUT_SECONDS: int = 30
 
     # Agent / Policy
