@@ -5,7 +5,9 @@ import { TransactionsPage } from './pages/TransactionsPage';
 import { TransactionDetailPage } from './pages/TransactionDetailPage';
 import { RecoveriesPage } from './pages/RecoveriesPage';
 import { IntelligencePage } from './pages/IntelligencePage';
+import { ApprovalsPage } from './pages/ApprovalsPage';
 import { AuditPage } from './pages/AuditPage';
+import { SettingsPage } from './pages/SettingsPage';
 import { DemoRunResponse } from './types';
 
 export const App: React.FC = () => {
@@ -56,8 +58,12 @@ export const App: React.FC = () => {
         return <RecoveriesPage onSelectTransaction={handleSelectTransaction} />;
       case '/intelligence':
         return <IntelligencePage />;
+      case '/approvals':
+        return <ApprovalsPage />;
       case '/audit':
         return <AuditPage />;
+      case '/settings':
+        return <SettingsPage />;
       default:
         return <DashboardPage onSelectTransaction={handleSelectTransaction} />;
     }

@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { dashboardApi, transactionsApi } from '../api/client';
 import { DashboardSummary, DashboardTrends, DashboardFailureBreakdown, Transaction } from '../types';
+import { WelcomeBanner } from '../components/dashboard/WelcomeBanner';
 import { KpiGrid } from '../components/dashboard/KpiGrid';
 import { RecoveryChart } from '../components/dashboard/RecoveryChart';
+import { RecentRecoveriesFeed } from '../components/dashboard/RecentRecoveriesFeed';
 import { FailureDistribution } from '../components/dashboard/FailureDistribution';
+import { TopFailureReasons } from '../components/dashboard/TopFailureReasons';
 import { RecentTransactionsTable } from '../components/dashboard/RecentTransactionsTable';
 import { LoadingSkeleton } from '../components/common/LoadingSkeleton';
 
@@ -51,20 +54,36 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onSelectTransactio
   }
 
   return (
-    <div className="space-y-6">
-      {/* Top KPI Cards */}
+    <div className="space-y-6 max-w-[1600px] mx-auto pb-8">
+      {/* Hero Welcome Banner */}
+      <WelcomeBanner />
+
+      {/* Top 5 KPI Cards */}
       <KpiGrid summary={summary} />
 
-      {/* Main Chart */}
-      <RecoveryChart trends={trends} />
+      {/* Middle Row: Recovery Chart + Recent Recoveries Feed */}
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
+        <div className="lg:col-span-8">
+          <RecoveryChart trends={trends} />
+        </div>
+        <div className="lg:col-span-4">
+          <RecentRecoveriesFeed />
+        </div>
+      </div>
 
-      {/* Failure Breakdown & Recent Table */}
-      <FailureDistribution breakdown={breakdown} />
+      {/* Bottom Row: Failure Rate by Bank, Failure Rate by Payment Method, Top Failure Reasons */}
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <FailureDistribution breakdown={breakdown} />
+        <TopFailureReasons />
+      </div>
 
-      <RecentTransactionsTable
-        transactions={transactions}
-        onSelectTransaction={onSelectTransaction}
-      />
+      {/* Recent Live Transactions */}
+      <div className="pt-2">
+        <RecentTransactionsTable
+          transactions={transactions}
+          onSelectTransaction={onSelectTransaction}
+        />
+      </div>
     </div>
   );
 };
