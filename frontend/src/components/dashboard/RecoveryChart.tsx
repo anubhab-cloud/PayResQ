@@ -27,23 +27,29 @@ export const RecoveryChart: React.FC<RecoveryChartProps> = ({ trends }) => {
   ];
 
   return (
-    <div className="relative rounded-xl border border-slate-200 bg-white p-5 shadow-xs dark:border-slate-800 dark:bg-slate-900 flex flex-col justify-between">
+    <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-xs dark:border-slate-800 dark:bg-slate-900 flex flex-col justify-between">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 pb-4 dark:border-slate-800">
         <div className="flex items-center gap-3">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-50 text-blue-600 dark:bg-blue-950/40 dark:text-blue-400">
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-50 text-blue-600 dark:bg-blue-950/40 dark:text-blue-400 shrink-0">
             <LineChart className="h-4 w-4" />
           </div>
           <div>
-            <h3 className="text-sm font-bold tracking-tight text-slate-900 dark:text-white">
-              Recovery Performance
-            </h3>
-            <p className="text-xs text-slate-500 dark:text-slate-400">
+            <div className="flex flex-wrap items-center gap-2">
+              <h3 className="text-sm font-bold tracking-tight text-slate-900 dark:text-white">
+                Recovery Performance
+              </h3>
+              <span className="inline-flex items-center gap-1 rounded-md bg-emerald-50 px-2 py-0.5 text-[11px] font-semibold text-emerald-700 border border-emerald-200 dark:bg-emerald-950/50 dark:text-emerald-400 dark:border-emerald-900/60">
+                <Sparkles className="h-3 w-3" />
+                <span>+₹60.3K recovered</span>
+              </span>
+            </div>
+            <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
               Daily failed vs recovered transaction volume
             </p>
           </div>
         </div>
 
-        <div className="flex items-center gap-6">
+        <div className="flex flex-wrap items-center gap-4">
           <div className="flex items-center gap-4 text-xs font-medium">
             <div className="flex items-center gap-2">
               <span className="h-2.5 w-2.5 rounded-full bg-blue-600" />
@@ -55,17 +61,11 @@ export const RecoveryChart: React.FC<RecoveryChartProps> = ({ trends }) => {
             </div>
           </div>
 
-          <div className="flex items-center gap-1 rounded-lg border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs font-medium text-slate-600 dark:border-slate-800 dark:bg-slate-800 dark:text-slate-300">
+          <div className="flex items-center gap-1 rounded-lg border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs font-medium text-slate-600 dark:border-slate-800 dark:bg-slate-800 dark:text-slate-300 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
             <span>Last 7 days</span>
             <ChevronDown className="h-3.5 w-3.5 text-slate-400" />
           </div>
         </div>
-      </div>
-
-      {/* Floating Pill Banner Tag */}
-      <div className="absolute right-8 top-18 z-10 hidden lg:flex items-center gap-1.5 rounded-lg bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-700 border border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-400 dark:border-emerald-900/60 shadow-xs">
-        <Sparkles className="h-3.5 w-3.5" />
-        <span>Recovery picking up +₹60.3K recovered</span>
       </div>
 
       <div className="mt-6 h-64 w-full">
