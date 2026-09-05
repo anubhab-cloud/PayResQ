@@ -21,7 +21,8 @@ export const KpiGrid: React.FC<KpiGridProps> = ({ summary }) => {
       trendSub: 'vs. previous period',
       trendPositive: false,
       icon: Zap,
-      iconBg: 'bg-red-500/10 text-red-500 border border-red-500/20',
+      iconColor: 'text-rose-500',
+      iconBg: 'bg-rose-50 dark:bg-rose-950/30',
     },
     {
       title: 'Recovered Revenue',
@@ -30,7 +31,8 @@ export const KpiGrid: React.FC<KpiGridProps> = ({ summary }) => {
       trendSub: 'vs. previous period',
       trendPositive: true,
       icon: CheckCircle2,
-      iconBg: 'bg-emerald-500/10 text-emerald-500 border border-emerald-500/20',
+      iconColor: 'text-emerald-500',
+      iconBg: 'bg-emerald-50 dark:bg-emerald-950/30',
     },
     {
       title: 'Recovery Rate',
@@ -39,7 +41,8 @@ export const KpiGrid: React.FC<KpiGridProps> = ({ summary }) => {
       trendSub: 'vs. previous period',
       trendPositive: true,
       icon: TrendingUp,
-      iconBg: 'bg-blue-500/10 text-blue-500 border border-blue-500/20',
+      iconColor: 'text-blue-600 dark:text-blue-400',
+      iconBg: 'bg-blue-50 dark:bg-blue-950/30',
     },
     {
       title: 'Failed Payments',
@@ -48,7 +51,8 @@ export const KpiGrid: React.FC<KpiGridProps> = ({ summary }) => {
       trendSub: 'awaiting/processed',
       trendPositive: true,
       icon: CreditCard,
-      iconBg: 'bg-indigo-500/10 text-indigo-500 border border-indigo-500/20',
+      iconColor: 'text-indigo-500',
+      iconBg: 'bg-indigo-50 dark:bg-indigo-950/30',
     },
     {
       title: 'Human Approvals',
@@ -57,7 +61,8 @@ export const KpiGrid: React.FC<KpiGridProps> = ({ summary }) => {
       trendSub: 'gated high-value items',
       trendPositive: true,
       icon: UserCheck,
-      iconBg: 'bg-amber-500/10 text-amber-500 border border-amber-500/20',
+      iconColor: 'text-amber-500',
+      iconBg: 'bg-amber-50 dark:bg-amber-950/30',
     },
   ];
 
@@ -68,35 +73,35 @@ export const KpiGrid: React.FC<KpiGridProps> = ({ summary }) => {
         return (
           <div
             key={idx}
-            className="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm transition-all hover:shadow-md dark:border-slate-800/80 dark:bg-slate-900 flex flex-col justify-between"
+            className="rounded-xl border border-slate-200 bg-white p-5 shadow-xs transition-colors dark:border-slate-800 dark:bg-slate-900 flex flex-col justify-between"
           >
             <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">
+              <span className="text-xs font-medium text-slate-500 dark:text-slate-400">
                 {kpi.title}
               </span>
-              <div className={`flex h-9 w-9 items-center justify-center rounded-xl ${kpi.iconBg}`}>
-                <Icon className="h-4.5 w-4.5" />
+              <div className={`flex h-8 w-8 items-center justify-center rounded-lg ${kpi.iconBg} ${kpi.iconColor}`}>
+                <Icon className="h-4 w-4" />
               </div>
             </div>
 
-            <div className="mt-4">
-              <div className="text-2xl font-black tracking-tight text-slate-900 dark:text-white">
+            <div className="mt-3">
+              <div className="text-xl sm:text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
                 {kpi.value}
               </div>
 
-              <div className="mt-2 flex items-center gap-1.5 text-[11px]">
+              <div className="mt-1.5 flex items-center gap-1.5 text-[11px]">
                 {kpi.trend && (
                   <span
-                    className={`font-bold ${
+                    className={`font-semibold ${
                       kpi.trendPositive
                         ? 'text-emerald-600 dark:text-emerald-400'
-                        : 'text-red-500 dark:text-red-400'
+                        : 'text-rose-600 dark:text-rose-400'
                     }`}
                   >
                     {kpi.trend}
                   </span>
                 )}
-                <span className="text-slate-400 dark:text-slate-500 font-medium truncate">
+                <span className="text-slate-400 dark:text-slate-500 truncate">
                   {kpi.trendSub}
                 </span>
               </div>

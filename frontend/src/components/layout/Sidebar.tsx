@@ -33,11 +33,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
       path: '/intelligence',
       icon: BrainCircuit,
       badgeText: 'AI',
-      badgeColor: 'bg-blue-600 text-white',
+      badgeColor: 'bg-blue-500/20 text-blue-400 border border-blue-500/30',
     },
     {
       label: 'Approvals',
-      path: '/recoveries',
+      path: '/approvals',
       icon: CheckCircle2,
       countBadge: pendingApprovalsCount,
     },
@@ -53,7 +53,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   };
 
   return (
-    <aside className="w-64 h-full bg-[#0B1120] text-slate-300 flex flex-col justify-between select-none border-r border-slate-800/80 shrink-0">
+    <aside className="w-64 h-full bg-[#0A0E1A] text-slate-300 flex flex-col justify-between select-none border-r border-slate-800/70 shrink-0">
       <div>
         {/* Brand Header */}
         <div className="flex h-20 items-center px-6 border-b border-slate-800/60">
@@ -61,7 +61,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
         </div>
 
         {/* Navigation List */}
-        <nav className="p-4 space-y-1.5 mt-2">
+        <nav className="p-3.5 space-y-1 mt-2">
           {navItems.map((item) => {
             const Icon = item.icon;
             const isActive = currentPath === item.path;
@@ -70,13 +70,13 @@ export const Sidebar: React.FC<SidebarProps> = ({
               <button
                 key={item.path + item.label}
                 onClick={() => handleNavClick(item.path)}
-                className={`flex w-full items-center justify-between rounded-xl px-4 py-3 text-sm font-medium transition-all duration-200 ${
+                className={`flex w-full items-center justify-between rounded-lg px-3.5 py-2.5 text-sm font-medium transition-colors duration-150 ${
                   isActive
-                    ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg shadow-blue-600/30 font-semibold'
-                    : 'text-slate-400 hover:bg-slate-800/60 hover:text-white'
+                    ? 'bg-blue-600 text-white font-semibold shadow-sm'
+                    : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-100'
                 }`}
               >
-                <div className="flex items-center gap-3.5">
+                <div className="flex items-center gap-3">
                   <Icon
                     className={`h-4.5 w-4.5 ${
                       isActive ? 'text-white' : 'text-slate-400'
@@ -87,12 +87,12 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
                 <div className="flex items-center gap-2">
                   {item.badgeText && (
-                    <span className={`rounded-full px-2 py-0.5 text-[10px] font-extrabold uppercase ${item.badgeColor}`}>
+                    <span className={`rounded-md px-1.5 py-0.5 text-[10px] font-bold tracking-wider ${item.badgeColor}`}>
                       {item.badgeText}
                     </span>
                   )}
                   {item.countBadge !== undefined && item.countBadge > 0 && (
-                    <span className="rounded-full bg-red-500 px-2 py-0.5 text-[11px] font-extrabold text-white">
+                    <span className="rounded-full bg-rose-500/20 text-rose-400 border border-rose-500/30 px-2 py-0.5 text-[11px] font-bold">
                       {item.countBadge}
                     </span>
                   )}
@@ -104,21 +104,21 @@ export const Sidebar: React.FC<SidebarProps> = ({
       </div>
 
       {/* AI Working Banner Footer */}
-      <div className="p-4">
-        <div className="relative overflow-hidden rounded-2xl border border-slate-800 bg-gradient-to-b from-slate-900 to-[#0F172A] p-4 text-white shadow-lg">
-          <div className="relative z-10 space-y-1.5">
-            <div className="flex items-center gap-1.5 text-blue-400 text-xs font-bold uppercase tracking-wider">
+      <div className="p-3.5">
+        <div className="relative overflow-hidden rounded-xl border border-slate-800/80 bg-[#111625] p-4 text-white shadow-xs">
+          <div className="relative z-10 space-y-1">
+            <div className="flex items-center gap-1.5 text-blue-400 text-xs font-semibold uppercase tracking-wider">
               <Sparkles className="h-3.5 w-3.5" />
-              <span>AI Working for Your Revenue</span>
+              <span>Autonomous AI Agent</span>
             </div>
-            <p className="text-xs text-slate-400 leading-relaxed">
-              Smarter retries. Higher recovery. Happier customers.
+            <p className="text-xs text-slate-400 leading-relaxed pt-0.5">
+              Intelligent RCA & recovery decisioning active.
             </p>
           </div>
 
-          {/* Background Watermark emblem */}
-          <div className="absolute right-[-10px] bottom-[-10px] opacity-10 pointer-events-none">
-            <svg viewBox="0 0 100 100" className="h-24 w-24 text-blue-400" fill="currentColor">
+          {/* Background emblem watermark */}
+          <div className="absolute right-[-8px] bottom-[-8px] opacity-10 pointer-events-none">
+            <svg viewBox="0 0 100 100" className="h-20 w-20 text-blue-400" fill="currentColor">
               <path d="M20 85L55 15H80L45 85H20Z" />
               <path d="M45 45L75 15H92L62 45H45Z" />
             </svg>

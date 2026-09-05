@@ -27,11 +27,11 @@ export const RecoveryChart: React.FC<RecoveryChartProps> = ({ trends }) => {
   ];
 
   return (
-    <div className="relative rounded-2xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900 flex flex-col justify-between">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 pb-4 dark:border-slate-800">
+    <div className="relative rounded-xl border border-slate-200 bg-white p-5 shadow-xs dark:border-slate-800 dark:bg-slate-900 flex flex-col justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 pb-4 dark:border-slate-800">
         <div className="flex items-center gap-3">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-blue-500/10 text-blue-500 border border-blue-500/20">
-            <LineChart className="h-5 w-5" />
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-50 text-blue-600 dark:bg-blue-950/40 dark:text-blue-400">
+            <LineChart className="h-4 w-4" />
           </div>
           <div>
             <h3 className="text-sm font-bold tracking-tight text-slate-900 dark:text-white">
@@ -44,7 +44,7 @@ export const RecoveryChart: React.FC<RecoveryChartProps> = ({ trends }) => {
         </div>
 
         <div className="flex items-center gap-6">
-          <div className="flex items-center gap-4 text-xs font-semibold">
+          <div className="flex items-center gap-4 text-xs font-medium">
             <div className="flex items-center gap-2">
               <span className="h-2.5 w-2.5 rounded-full bg-blue-600" />
               <span className="text-slate-600 dark:text-slate-300">Failed Payments</span>
@@ -55,7 +55,7 @@ export const RecoveryChart: React.FC<RecoveryChartProps> = ({ trends }) => {
             </div>
           </div>
 
-          <div className="flex items-center gap-1 rounded-lg border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs font-semibold text-slate-600 dark:border-slate-800 dark:bg-slate-800 dark:text-slate-300">
+          <div className="flex items-center gap-1 rounded-lg border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs font-medium text-slate-600 dark:border-slate-800 dark:bg-slate-800 dark:text-slate-300">
             <span>Last 7 days</span>
             <ChevronDown className="h-3.5 w-3.5 text-slate-400" />
           </div>
@@ -63,7 +63,7 @@ export const RecoveryChart: React.FC<RecoveryChartProps> = ({ trends }) => {
       </div>
 
       {/* Floating Pill Banner Tag */}
-      <div className="absolute right-8 top-20 z-10 hidden lg:flex items-center gap-2 rounded-xl bg-emerald-50 px-3 py-1.5 text-xs font-bold text-emerald-700 border border-emerald-200/80 dark:bg-emerald-950/60 dark:text-emerald-300 dark:border-emerald-800/80 shadow-sm">
+      <div className="absolute right-8 top-18 z-10 hidden lg:flex items-center gap-1.5 rounded-lg bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-700 border border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-400 dark:border-emerald-900/60 shadow-xs">
         <Sparkles className="h-3.5 w-3.5" />
         <span>Recovery picking up +₹60.3K recovered</span>
       </div>
@@ -73,15 +73,15 @@ export const RecoveryChart: React.FC<RecoveryChartProps> = ({ trends }) => {
           <AreaChart data={data} margin={{ top: 10, right: 10, left: -15, bottom: 0 }}>
             <defs>
               <linearGradient id="colorFailedBlue" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#2563EB" stopOpacity={0.25} />
+                <stop offset="5%" stopColor="#2563EB" stopOpacity={0.2} />
                 <stop offset="95%" stopColor="#2563EB" stopOpacity={0} />
               </linearGradient>
               <linearGradient id="colorRecoveredGreen" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#10B981" stopOpacity={0.25} />
+                <stop offset="5%" stopColor="#10B981" stopOpacity={0.2} />
                 <stop offset="95%" stopColor="#10B981" stopOpacity={0} />
               </linearGradient>
             </defs>
-            <CartesianGrid strokeDasharray="3 3" stroke="#334155" opacity={0.15} />
+            <CartesianGrid strokeDasharray="3 3" stroke="#334155" opacity={0.12} />
             <XAxis dataKey="date" stroke="#94a3b8" fontSize={11} tickLine={false} />
             <YAxis
               stroke="#94a3b8"
@@ -93,10 +93,10 @@ export const RecoveryChart: React.FC<RecoveryChartProps> = ({ trends }) => {
               contentStyle={{
                 backgroundColor: '#0f172a',
                 borderColor: '#1e293b',
-                borderRadius: '0.75rem',
+                borderRadius: '0.5rem',
                 fontSize: '0.75rem',
                 color: '#fff',
-                boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.3)',
+                boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
               }}
             />
             <Area
@@ -106,8 +106,8 @@ export const RecoveryChart: React.FC<RecoveryChartProps> = ({ trends }) => {
               stroke="#2563EB"
               fillOpacity={1}
               fill="url(#colorFailedBlue)"
-              strokeWidth={3}
-              dot={{ r: 4, fill: '#2563EB' }}
+              strokeWidth={2.5}
+              dot={{ r: 3.5, fill: '#2563EB' }}
             />
             <Area
               type="monotone"
@@ -116,8 +116,8 @@ export const RecoveryChart: React.FC<RecoveryChartProps> = ({ trends }) => {
               stroke="#10B981"
               fillOpacity={1}
               fill="url(#colorRecoveredGreen)"
-              strokeWidth={3}
-              dot={{ r: 4, fill: '#10B981' }}
+              strokeWidth={2.5}
+              dot={{ r: 3.5, fill: '#10B981' }}
             />
           </AreaChart>
         </ResponsiveContainer>
